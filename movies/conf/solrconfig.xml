@@ -692,13 +692,17 @@
       -->
     <lst name="defaults">
       <str name="echoParams">explicit</str>
-      <int name="rows">10</int>
-      <!-- Default search field
-         <str name="df">text</str> 
-        -->
-      <!-- Change from JSON to XML format (the default prior to Solr 7.0)
-         <str name="wt">xml</str> 
-        -->
+      <int name="rows">20</int>
+	  
+	  <int name="timeAllowed">10000</int>
+	  <str name="spellcheck">true</str>
+	  <str name="spellcheck.count">20</str>
+      <!-- Default search field-->
+         <str name="df">title</str> 
+        <!---->
+      <!-- Change from JSON to XML format (the default prior to Solr 7.0)-->
+         <str name="wt">json</str> 
+        
     </lst>
     <!-- In addition to defaults, "appends" params can be specified
          to identify values which should be appended to the list of
@@ -841,7 +845,29 @@
        NOTE: The component registered with the name "debug" will
        always be executed after the "last-components"
 
-     -->
+     --> <!--suggest-->
+  <searchComponent name="suggest" class="solr.SuggestComponent">
+  <lst name="suggester">
+    <str name="name">mySuggester</str>
+    <str name="lookupImpl">FuzzyLookupFactory</str>
+    <str name="dictionaryImpl">DocumentDictionaryFactory</str>
+    <str name="field">title</str>
+    
+    <str name="suggestAnalyzerFieldType">string</str>
+    <str name="buildOnStartup">false</str>
+  </lst>
+</searchComponent>
+
+<requestHandler name="/suggest" class="solr.SearchHandler" startup="lazy">
+  <lst name="defaults">
+    <str name="suggest">true</str>
+    <str name="suggest.count">10</str>
+  </lst>
+  <arr name="components">
+    <str>suggest</str>
+  </arr>
+</requestHandler>
+
 
   <!-- Spell Check
 
